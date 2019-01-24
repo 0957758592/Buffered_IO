@@ -1,0 +1,10 @@
+/.idea
+/target
+/src/main/resources
+/src/main/java/com/test/io/outputstream
+/src/main/java/com/test/io/ReadWrite.java
+
+*.iml
+*.class
+*.txt
+

@@ -22,9 +22,6 @@ public class BufferedInputStreamTest {
     private BufferedInputStream bufferedInputStream;
     private BufferedInputStream bufferedInputStreamWithSize;
 
-    public BufferedInputStreamTest() {
-    }
-
     @Before
     public void before() throws IOException {
         string = "Hello !";

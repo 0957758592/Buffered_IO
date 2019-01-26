@@ -29,6 +29,7 @@ public class BufferedInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
+
         if (index == count) {
             count = inputStream.read(buffer);
             index = 0;
@@ -87,19 +88,19 @@ public class BufferedInputStream extends InputStream {
         return copiedBytes;
     }
 
+    @Override
+    public void close() throws IOException {
+        index = 0;
+        count = 0;
+        inputStream.close();
+    }
+
     private int fillCount() throws IOException {
         if (index == count) {
             count = inputStream.read(buffer);
             index = 0;
         }
         return count;
-    }
-
-    @Override
-    public void close() throws IOException {
-        index = 0;
-        count = 0;
-        inputStream.close();
     }
 
     private void validateParams(byte[] array, int off, int len) {

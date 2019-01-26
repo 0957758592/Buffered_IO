@@ -110,10 +110,9 @@ public class BufferedInputStream extends InputStream {
         if (off < 0 || off > buffer.length) {
             throw new IllegalArgumentException("The position should be between 0 and " + buffer.length);
         }
-        if (array.length < len) {
-            throw new IllegalArgumentException("The length should be no more than " + array.length);
+        if (len <= 0 || len > array.length) {
+            throw new IllegalArgumentException("The length should be between 0 and " + array.length);
         }
     }
 
 }
-

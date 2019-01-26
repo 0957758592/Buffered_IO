@@ -2,6 +2,7 @@
 /target
 /src/main/resources
 /src/main/java/com/test/io/outputstream
+/src/main/java/com/test/io/inputstream/BufferedInputStream2.java
 /src/main/java/com/test/io/ReadWrite.java
 
 *.iml

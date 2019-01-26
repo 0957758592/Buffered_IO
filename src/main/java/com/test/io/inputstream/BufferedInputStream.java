@@ -11,12 +11,11 @@ public class BufferedInputStream extends InputStream {
     private int index;
     private int count;
 
-
-    BufferedInputStream(InputStream inputStream) {
+    public BufferedInputStream(InputStream inputStream) {
         this(inputStream, INITIAL_CAPACITY);
     }
 
-   public BufferedInputStream(InputStream inputStream, int size) {
+    public BufferedInputStream(InputStream inputStream, int size) {
         this.inputStream = inputStream;
         if (size <= 0) {
             throw new IllegalArgumentException("your size is " + size + " but, should be increased");
@@ -40,31 +39,60 @@ public class BufferedInputStream extends InputStream {
 
     @Override
     public int read(byte[] array) throws IOException {
+
         if (array.length <= 0) {
             throw new IllegalArgumentException("The length " + array.length + " is not valid");
         }
+
         return read(array, 0, array.length);
     }
 
     @Override
     public int read(byte[] array, int off, int len) throws IOException {
-        cleanArray(array);
+        validateParams(array, off, len);
 
+        if (fillCount() == -1) {
+            return -1;
+        }
+
+        int availableBytes = count - index;
+        int copiedBytes = 0;
+
+        if (len <= availableBytes) {
+            System.arraycopy(buffer, index, array, off, len);
+            index += len;
+            copiedBytes = len;
+        } else {
+            System.arraycopy(buffer, index, array, off, availableBytes);
+            index += availableBytes;
+            copiedBytes = availableBytes;
+
+            int extraBytes = len - copiedBytes;
+
+            if (fillCount() == -1) {
+                System.arraycopy(new byte[array.length], off + copiedBytes, array, off + copiedBytes, extraBytes);
+            } else {
+                if (count < extraBytes) {
+                    System.arraycopy(buffer, index, array, off + copiedBytes, count);
+                    copiedBytes += count;
+                    index += count;
+                    System.arraycopy(new byte[array.length], off + copiedBytes, array, off + copiedBytes, off + len);
+                } else {
+                    System.arraycopy(buffer, index, array, off + copiedBytes, extraBytes);
+                    copiedBytes += extraBytes;
+                    index += extraBytes;
+                }
+            }
+        }
+        return copiedBytes;
+    }
+
+    private int fillCount() throws IOException {
         if (index == count) {
             count = inputStream.read(buffer);
             index = 0;
         }
-
-        int unreadBytes = count - index;
-
-        if (count == -1) {
-            return -1;
-        } else {
-            int length = getLength(len, unreadBytes);
-            System.arraycopy(buffer, index, array, off, length);
-            index += length;
-            return length;
-        }
+        return count;
     }
 
     @Override
@@ -78,9 +106,21 @@ public class BufferedInputStream extends InputStream {
         return len < unreadBytes ? len : unreadBytes;
     }
 
-    private void cleanArray(byte[] array) {
-        System.arraycopy(new byte[array.length],0,array,0,array.length);
+    private void validateParams(byte[] array, int off, int len) {
+        if (array.length > buffer.length) {
+            buffer = new byte[array.length];
+        }
+        if (off < 0 || off > buffer.length) {
+            throw new IllegalArgumentException("The position should be between 0 and " + buffer.length);
+        }
+        if (array.length < len) {
+            throw new IllegalArgumentException("The length should be no more than " + array.length);
+        }
     }
+
+//    private void cleanArray(byte[] array) {
+//        System.arraycopy(new byte[array.length], 0, array, 0, array.length);
+//    }
 
 }
 

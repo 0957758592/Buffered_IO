@@ -56,7 +56,7 @@ public class BufferedInputStream extends InputStream {
         }
 
         int availableBytes = count - index;
-        int copiedBytes = 0;
+        int copiedBytes;
 
         if (len <= availableBytes) {
             System.arraycopy(buffer, index, array, off, len);
@@ -102,10 +102,6 @@ public class BufferedInputStream extends InputStream {
         inputStream.close();
     }
 
-    private int getLength(int len, int unreadBytes) throws IOException {
-        return len < unreadBytes ? len : unreadBytes;
-    }
-
     private void validateParams(byte[] array, int off, int len) {
         if (array.length > buffer.length) {
             buffer = new byte[array.length];
@@ -117,10 +113,6 @@ public class BufferedInputStream extends InputStream {
             throw new IllegalArgumentException("The length should be no more than " + array.length);
         }
     }
-
-//    private void cleanArray(byte[] array) {
-//        System.arraycopy(new byte[array.length], 0, array, 0, array.length);
-//    }
 
 }
 

@@ -21,6 +21,7 @@ public class BufferedOutputStream extends OutputStream {
         if (size <= 0) {
             throw new IllegalArgumentException("Incorrect buffer size: " + size);
         }
+
         this.outputStream = outputStream;
         this.buffer = new byte[size];
     }
@@ -31,6 +32,7 @@ public class BufferedOutputStream extends OutputStream {
 
     @Override
     public void write(int value) throws IOException {
+        bufferIsNull();
         if (index == buffer.length) {
             flush();
         }
@@ -39,6 +41,7 @@ public class BufferedOutputStream extends OutputStream {
 
     @Override
     public void write(byte[] array) throws IOException {
+        bufferIsNull();
         if (array.length <= 0) {
             throw new IllegalArgumentException("Incorrect buffer size: " + array.length);
         }
@@ -74,11 +77,8 @@ public class BufferedOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         flush();
-        index = 0;
-        for (byte b : buffer) {
-            b = 0;
-        }
-        outputStream.close();
+        this.buffer = null;
+        this.outputStream.close();
     }
 
     private void validateParameters(byte[] array, int off, int len) {
@@ -90,6 +90,12 @@ public class BufferedOutputStream extends OutputStream {
         }
         if (len <= 0 || len > array.length) {
             throw new IllegalArgumentException("The length should be between 0 and " + array.length);
+        }
+    }
+
+    private void bufferIsNull() throws IOException {
+        if (this.buffer == null) {
+            throw new IOException("BufferedOutputStream is closed");
         }
     }
 

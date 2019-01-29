@@ -4,10 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-//import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import static org.junit.Assert.*;
 
@@ -99,12 +97,10 @@ public class BufferedOutputStreamTest {
 
     @Test(expected = IOException.class)
     public void close() throws Exception {
-        OutputStream outputStream = new ByteArrayOutputStream();
-        BufferedOutputStream bos = new BufferedOutputStream(outputStream);
         byte[] array = "TEST".getBytes();
+        BufferedOutputStream bos = new BufferedOutputStream(new ByteArrayOutputStream());
         bos.write(array);
         bos.close();
-        outputStream.close();
         bos.write(array);
     }
 

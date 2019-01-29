@@ -16,10 +16,10 @@ public class BufferedInputStream extends InputStream {
     }
 
     public BufferedInputStream(InputStream inputStream, int size) {
-        this.inputStream = inputStream;
         if (size <= 0) {
-            throw new IllegalArgumentException("your size is " + size + " but, should be increased");
+            throw new IllegalArgumentException("Incorrect buffer size: " + size);
         }
+        this.inputStream = inputStream;
         buffer = new byte[size];
     }
 
@@ -43,6 +43,9 @@ public class BufferedInputStream extends InputStream {
 
         if (array.length <= 0) {
             throw new IllegalArgumentException("The length " + array.length + " is not valid");
+        }
+        if(array == null){
+            throw new NullPointerException("Buffer is null");
         }
 
         return read(array, 0, array.length);
@@ -92,6 +95,9 @@ public class BufferedInputStream extends InputStream {
     public void close() throws IOException {
         index = 0;
         count = 0;
+        for (byte b : buffer) {
+            b = 0;
+        }
         inputStream.close();
     }
 
@@ -107,8 +113,8 @@ public class BufferedInputStream extends InputStream {
         if (array.length > buffer.length) {
             buffer = new byte[array.length];
         }
-        if (off < 0 || off > buffer.length) {
-            throw new IllegalArgumentException("The position should be between 0 and " + buffer.length);
+        if (off < 0 || off > array.length) {
+            throw new IllegalArgumentException("The position should be between 0 and " + array.length);
         }
         if (len <= 0 || len > array.length) {
             throw new IllegalArgumentException("The length should be between 0 and " + array.length);

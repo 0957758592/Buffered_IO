@@ -38,6 +38,7 @@ public class BufferedInputStreamTest {
     @After
     public void after() throws IOException {
         bufferedInputStream.close();
+        inputStream.close();
     }
 
     @Test
@@ -96,6 +97,7 @@ public class BufferedInputStreamTest {
         int size = 300;
         bufferedInputStreamWithSize = new BufferedInputStream(inputStream, size);
         assertEquals(size, bufferedInputStreamWithSize.getBuffer().length);
+        bufferedInputStreamWithSize.close();
     }
 
     @Test
@@ -118,6 +120,11 @@ public class BufferedInputStreamTest {
             i++;
         }
 
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullPointerExceptionReadTest() throws IOException {
+        bufferedInputStream.read(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -147,9 +154,13 @@ public class BufferedInputStreamTest {
         bufferedInputStream.read(array, 0, len);
     }
 
-    @Test
+    @Test(expected = IOException.class)
     public void close() throws Exception {
-        assertEquals(0, count);
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        byte[] array = "TEST".getBytes();
+        bis.read(array);
+        bis.close();
+        bis.read();
     }
 
 }

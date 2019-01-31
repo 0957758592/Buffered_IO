@@ -15,17 +15,17 @@ import static org.junit.Assert.*;
 
 public class BufferedInputStreamTest {
     private int count;
-    private String string;
+    private final String STRING = "Hello !";
     private InputStream inputStream;
     private BufferedInputStream bufferedInputStream;
 
     @Before
     public void before() throws IOException {
-        string = "Hello !";
+
         File file = File.createTempFile("testFile", ".txt");
 
         try (BufferedWriter br = new BufferedWriter(new FileWriter(file))) {
-            br.write(string);
+            br.write(STRING);
         }
 
         inputStream = new FileInputStream(file.getAbsolutePath());
@@ -40,11 +40,11 @@ public class BufferedInputStreamTest {
 
     @Test
     public void readTest() throws Exception {
-        for (int i = 0; i < string.length(); i++) {
-            assertEquals(string.charAt(i), bufferedInputStream.read());
+        for (int i = 0; i < STRING.length(); i++) {
+            assertEquals(STRING.charAt(i), bufferedInputStream.read());
             count++;
         }
-        assertEquals(count, string.length());
+        assertEquals(count, STRING.length());
     }
 
     @Test

@@ -29,12 +29,9 @@ public class BufferedOutputStreamTest {
 
     @Test
     public void writeTest() throws Exception {
-        bufferedOutputStream.write("H".getBytes());
+        bufferedOutputStream.write(72);
         bufferedOutputStream.close();
-
-        for (byte b : byteArrayOutputStream.toByteArray()) {
-            assertEquals(72, b);
-        }
+        assertEquals(72, byteArrayOutputStream.toByteArray()[0]);
     }
 
     @Test
@@ -53,12 +50,8 @@ public class BufferedOutputStreamTest {
         bufferedOutputStream.write(content, 2, 2);
         bufferedOutputStream.close();
 
-        for (int i = 0; i < byteArrayOutputStream.toByteArray().length; ) {
-            assertEquals(108, byteArrayOutputStream.toByteArray()[i]);
-            i++;
-            assertEquals(108, byteArrayOutputStream.toByteArray()[i]);
-            i++;
-        }
+        assertEquals(108, byteArrayOutputStream.toByteArray()[0]);
+        assertEquals(108, byteArrayOutputStream.toByteArray()[1]);
 
     }
 
@@ -97,11 +90,9 @@ public class BufferedOutputStreamTest {
 
     @Test(expected = IOException.class)
     public void close() throws Exception {
-        byte[] array = "TEST".getBytes();
-        BufferedOutputStream bos = new BufferedOutputStream(new ByteArrayOutputStream());
-        bos.write(array);
-        bos.close();
-        bos.write(array);
+        bufferedOutputStream.write(72);
+        bufferedOutputStream.close();
+        bufferedOutputStream.write(72);
     }
 
 }

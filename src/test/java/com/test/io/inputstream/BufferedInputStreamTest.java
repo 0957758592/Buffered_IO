@@ -14,13 +14,10 @@ import java.io.InputStream;
 import static org.junit.Assert.*;
 
 public class BufferedInputStreamTest {
-    private static final int INITIAL_CAPACITY = 5;
-    private byte[] buffer = new byte[INITIAL_CAPACITY];
     private int count;
     private String string;
     private InputStream inputStream;
     private BufferedInputStream bufferedInputStream;
-    private BufferedInputStream bufferedInputStreamWithSize;
 
     @Before
     public void before() throws IOException {
@@ -55,49 +52,26 @@ public class BufferedInputStreamTest {
         byte[] array = new byte[3];
         assertEquals(3, bufferedInputStream.read(array));
 
-        for (int i = 0; i < array.length; ) {
-            assertEquals('H', array[i]);
-            i++;
-            assertEquals('e', array[i]);
-            i++;
-            assertEquals('l', array[i]);
-            i++;
-        }
+        assertEquals('H', array[0]);
+        assertEquals('e', array[1]);
+        assertEquals('l', array[2]);
 
         assertEquals(3, bufferedInputStream.read(array));
 
-        for (int i = 0; i < array.length; ) {
-            assertEquals('l', array[i]);
-            i++;
-            assertEquals('o', array[i]);
-            i++;
-            assertEquals(' ', array[i]);
-            i++;
-        }
+        assertEquals('l', array[0]);
+        assertEquals('o', array[1]);
+        assertEquals(' ', array[2]);
 
         assertEquals(1, bufferedInputStream.read(array));
 
-        for (int i = 0; i < array.length; ) {
-            assertEquals('!', array[i]);
-            i++;
-            assertEquals(0, array[i]);
-            i++;
-            assertEquals(0, array[i]);
-            i++;
-        }
+        assertEquals('!', array[0]);
+        assertEquals(0, array[1]);
+
     }
 
     @Test
     public void readCountBuffer() throws IOException {
-        assertEquals(5, inputStream.read(buffer));
-    }
-
-    @Test
-    public void readWithBufferAndInputStreamSizeTest() throws IOException {
-        int size = 300;
-        bufferedInputStreamWithSize = new BufferedInputStream(inputStream, size);
-        assertEquals(size, bufferedInputStreamWithSize.getBuffer().length);
-        bufferedInputStreamWithSize.close();
+        assertEquals(5, inputStream.read(new byte[5]));
     }
 
     @Test
@@ -107,31 +81,17 @@ public class BufferedInputStreamTest {
         int len = 3;
         assertEquals(3, bufferedInputStream.read(array, off, len));
 
-        for (int i = 0; i < array.length; ) {
-            assertEquals(0, array[i]);
-            i++;
-            assertEquals('H', array[i]);
-            i++;
-            assertEquals('e', array[i]);
-            i++;
-            assertEquals('l', array[i]);
-            i++;
-            assertEquals(0, array[i]);
-            i++;
-        }
+            assertEquals(0, array[0]);
+            assertEquals('H', array[1]);
+            assertEquals('e', array[2]);
+            assertEquals('l', array[3]);
+            assertEquals(0, array[4]);
 
     }
 
     @Test(expected = NullPointerException.class)
     public void nullPointerExceptionReadTest() throws IOException {
         bufferedInputStream.read(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void readWithBufferAndInputStreamSizeExceptionTest() throws IOException {
-        int size = 0;
-        bufferedInputStreamWithSize = new BufferedInputStream(inputStream, size);
-        assertEquals(size, bufferedInputStreamWithSize.getBuffer().length);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -156,11 +116,8 @@ public class BufferedInputStreamTest {
 
     @Test(expected = IOException.class)
     public void close() throws Exception {
-        BufferedInputStream bis = new BufferedInputStream(inputStream);
-        byte[] array = "TEST".getBytes();
-        bis.read(array);
-        bis.close();
-        bis.read();
+        bufferedInputStream.close();
+        bufferedInputStream.read();
     }
 
 }
